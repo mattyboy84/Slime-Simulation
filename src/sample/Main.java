@@ -24,7 +24,7 @@ public class Main extends Application {
 
     final float diffusionSpread = 0.0005f;
     public static float fps = 30;
-    public final float evaporateSpeed = 1f / (15f * (fps*1.3f));
+    public final float evaporateSpeed = 1f / (16f * (fps*1f));
 
     Group group = new Group();
     Scene scene = new Scene(group, width, height, Color.BLACK);
@@ -63,11 +63,8 @@ public class Main extends Application {
         canvas.getGraphicsContext2D().fillRect(0, 0, width, height);
         drawSetup();
 
-        //for (int i = 0; i <10 ; i++) {
-        //    writableImage.getPixelWriter().setColor(random.nextInt(width), random.nextInt(height),Color.BLACK );
-        //}
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 255; i++) {
             agents.add(new Agent(width / 2, height / 2, writableImage));
             agents.get(agents.size() - 1).start();
         }
@@ -105,10 +102,9 @@ public class Main extends Application {
 
                 float blurResult = getAVGOpacity(i,j);
 
-                float diffuseValue = Lerp(originalValue,blurResult,0.8f);
+                float diffuseValue = Lerp(originalValue,blurResult,1f);
 
-                float diffuseAndEvaporateValue = Math.max(diffuseValue-(evaporateSpeed),0);
-
+                double diffuseAndEvaporateValue = Math.max(diffuseValue-evaporateSpeed,0);
 
                 writableImage.getPixelWriter().setColor(i, j, Color.rgb(255, 255, 255, diffuseAndEvaporateValue));
             }

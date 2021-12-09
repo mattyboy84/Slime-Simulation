@@ -23,12 +23,12 @@ public class Agent implements Runnable {
 
     public static int size = 0;
     float mult = 1.5f * (30 / Main.fps);
-    float angleDelta = 45;
+    float angleDelta = 50;
     float angle;
     float weightForward = 0, weightLeft = 0, weightRight = 0;
-    public int viewDis = 8;
-    int sensorSize = 4;
-    float turnSpeed = 2f * (30 / Main.fps);
+    public int viewDis = 10;
+    int sensorSize = 6;
+    float turnSpeed = 4f * (30 / Main.fps);
     Random random = new Random();
 
     WritableImage writableImage;
@@ -63,19 +63,19 @@ public class Agent implements Runnable {
     private void steer() {
         //System.out.println("-------------------");
         weightForward = sense(0);
-        weightLeft = sense(-angleDelta);
         weightLeft = sense(angleDelta);
+        weightRight = sense(-angleDelta);
         //System.out.println("end -------------------");
         //System.out.println("Left: " + weightLeft + " Middle: " + weightForward + " Right: " + weightRight);
 
         if (weightForward < weightLeft && weightForward > weightRight) {
 
-        } else if (weightForward <= weightLeft && weightForward <= weightRight) {
-            this.velocity.fromAngle((this.velocity.toAngle()+ ((((random.nextInt(1)-0.5)/4))*turnSpeed)));
+        } else if (weightForward < weightLeft && weightForward < weightRight) {
+            this.velocity.fromAngle((this.velocity.toAngle() + ((((random.nextInt(1) - 0.5))/2) * (turnSpeed * 1))));
         } else if (weightRight > weightLeft) {
-            this.velocity.fromAngle((this.velocity.toAngle()-(random.nextFloat()*(turnSpeed*2))));
+            this.velocity.fromAngle((this.velocity.toAngle() - (1 * (turnSpeed * 1))));
         } else if (weightLeft > weightRight) {
-            this.velocity.fromAngle((this.velocity.toAngle()+(random.nextFloat()*(turnSpeed*2))));
+            this.velocity.fromAngle((this.velocity.toAngle() + (1 * (turnSpeed * 1))));
 
         }
     }

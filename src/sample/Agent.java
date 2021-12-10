@@ -23,10 +23,10 @@ public class Agent implements Runnable {
 
     public static int size = 0;
     float mult = 1.5f * (30 / Main.fps);
-    float angleDelta = 20;
+    float angleDelta = 25;
     float angle;
     float weightForward = 0, weightLeft = 0, weightRight = 0;
-    public int viewDis = 15;
+    public int viewDis = 20;
     int sensorSize = 1;
     float turnSpeed = 8f * (30 / Main.fps);
     Random random = new Random();
@@ -68,9 +68,7 @@ public class Agent implements Runnable {
         //System.out.println("end -------------------");
         //System.out.println("Left: " + weightLeft + " Middle: " + weightForward + " Right: " + weightRight);
 
-        if (weightForward < weightLeft && weightForward > weightRight) {
-
-        } else if (weightForward < weightLeft && weightForward < weightRight) {
+        if (weightForward < weightLeft && weightForward < weightRight) {
             this.velocity.fromAngle((this.velocity.toAngle() + ((((random.nextFloat() - 0.5)) * 3.5f) * (6f * 1))));
         } else if (weightRight > weightLeft) {
             this.velocity.fromAngle((this.velocity.toAngle() - (random.nextFloat() * (turnSpeed * 1))));

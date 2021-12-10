@@ -30,7 +30,6 @@ public class Main extends Application {
     //height=120;}
     //120x120 is a factor of 1080,1440,1920 - 120x120 grids on their own thread might work
 
-    final float diffusionSpread = 0.0005f;
     public static float fps = 30;
     public final float evaporateSpeed = 1f / (10f * (fps*1f));
 

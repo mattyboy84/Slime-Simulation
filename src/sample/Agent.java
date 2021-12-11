@@ -15,57 +15,49 @@ public class Agent implements Runnable {
     Vecc2f velocity = new Vecc2f();
     Vecc2f steering = new Vecc2f();
     //
-    int threadName;
+    String threadName;
     public Thread t;
     Timeline update;
     //
     int width, height;
+    int startX, startY;
 
     public static int size = 0;
     float mult = 1.5f * (30 / Main.fps);
-    float angleDelta = 25;
+    float angleDelta = 20;
     float angle;
     float weightForward = 0, weightLeft = 0, weightRight = 0;
-    public int viewDis = 20;
+    public int viewDis = 15;
     int sensorSize = 1;
     float turnSpeed = 8f * (30 / Main.fps);
     Random random = new Random();
-
+    public static int complete = 0;
     WritableImage writableImage;
 
-    public Agent(int startX, int startY, WritableImage writableImage) {
-        this.threadName = size;
+    public Agent(int startX, int startY, int width, int height, WritableImage writableImage) {
+        this.threadName = "Agent " + size;
         size++;
-        this.position = new Vecc2f(startX, startY);
+        //
+        this.startX = startX;
+        this.startY = startY;
+        this.position = new Vecc2f(this.startX, this.startY);
         //
 
         this.velocity.random2D(mult);
         this.velocity.setMag(mult);
         //
-        this.width = startX * 2;
-        this.height = startY * 2;
+
+        this.width = width;
+        this.height = height;
         //
         this.writableImage = writableImage;
         //
-        this.update = new Timeline(new KeyFrame(Duration.seconds((float) 1 / Main.fps), event -> {
-            //
-            steer();
-            //
-            update(width, height);
-            this.writableImage.getPixelWriter().setColor((int) Math.min(position.x, width), (int) Math.min(position.y, height), Color.rgb(255, 255, 255, 1));
-
-        }));
-        this.update.setCycleCount(Timeline.INDEFINITE);
-        this.update.play();
-
     }
 
     private void steer() {
-        //System.out.println("-------------------");
         weightForward = sense(0);
         weightLeft = sense(angleDelta);
         weightRight = sense(-angleDelta);
-        //System.out.println("end -------------------");
         //System.out.println("Left: " + weightLeft + " Middle: " + weightForward + " Right: " + weightRight);
 
         if (weightForward < weightLeft && weightForward < weightRight) {
@@ -74,7 +66,6 @@ public class Agent implements Runnable {
             this.velocity.fromAngle((this.velocity.toAngle() - (random.nextFloat() * (turnSpeed * 1))));
         } else if (weightLeft > weightRight) {
             this.velocity.fromAngle((this.velocity.toAngle() + (random.nextFloat() * (turnSpeed * 1))));
-
         }
     }
 
@@ -96,10 +87,10 @@ public class Agent implements Runnable {
         return a;
     }
 
-    public void update(int width, int height) {
+    public void update() {
         this.position.add(this.velocity);
 
-        if ((int) this.position.x < 0 || (int) this.position.x >= width || (int) this.position.y < 0 || (int) this.position.y >= height) {
+        if ((int) this.position.x < 0 || (int) this.position.x >= this.width || (int) this.position.y < 0 || (int) this.position.y >= this.height) {
             this.position.x = Math.min(width - 0.01f, Math.max(0, this.position.x));
             this.position.y = Math.min(height - 0.01f, Math.max(0, this.position.y));
             this.velocity.random2D(mult);
@@ -114,11 +105,25 @@ public class Agent implements Runnable {
 
     @Override
     public void run() {
-    }
+        try{this.update = new Timeline(new KeyFrame(Duration.seconds((float) 1 / Main.fps), event -> {
+
+            //
+            steer();
+            //
+            update();
+            this.writableImage.getPixelWriter().setColor((int) Math.min(position.x, width), (int) Math.min(position.y, height), Color.rgb(255, 255, 255, 1));
+
+        }));
+        this.update.setCycleCount(Timeline.INDEFINITE);
+        complete++;
+//play();
+    }catch (Exception e){
+
+    }}
 
     public void start() {
 
-        System.out.println("Starting " + threadName);
+        System.out.println("Starting Agent " + threadName);
         if (t == null) {
             t = new Thread(this, String.valueOf(threadName));
             t.start();
@@ -126,4 +131,7 @@ public class Agent implements Runnable {
     }
 
 
+    public void play() {
+        this.update.play();
+    }
 }
